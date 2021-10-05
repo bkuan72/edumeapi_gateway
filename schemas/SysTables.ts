@@ -1,3 +1,5 @@
+import { tokens_schema_table, token_schema, blacklist_tokens_schema_table } from './tokens.schema';
+import { logs_schema, logs_schema_table } from './logs.schema';
 import { properties_schema, properties_schema_table } from './properties.schema';
 import { tableIfc } from '../modules/DbModule';
 import { users_schema, users_schema_table } from './users.schema';
@@ -14,12 +16,24 @@ export const sysTables: tableIfc[] = [
     schema: users_schema
   },
   {
+    name: tokens_schema_table,
+    schema: token_schema
+  },
+  {
+    name: blacklist_tokens_schema_table,
+    schema: token_schema
+  },
+  {
     name: accounts_schema_table,
     schema: accounts_schema
   },
   {
     name: userAccounts_schema_table,
     schema: userAccounts_schema
+  },
+  {
+    name: logs_schema_table,
+    schema: logs_schema
   },
   {
     name: properties_schema_table,
