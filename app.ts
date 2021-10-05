@@ -17,7 +17,6 @@ import { UserModel } from './server/models/user.model';
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
 import dbConnection from './modules/DbModule';
 import cookieParser = require('cookie-parser');
 import SysLog from './modules/SysLog';
@@ -69,7 +68,7 @@ class App {
 
   limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000 // limit each IP to 1000 requests per windowMs
+    max: 1000 // limit each IP to 1000 requests per windows
   });
 
 
@@ -84,8 +83,8 @@ class App {
     // this.app.use(express.multipart({ limit:"10mb" }));
     // this.app.use(express.limit("5kb")); // this will be valid for every other content type
     this.app.use(this.loggerMiddleware);
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
     //  apply to all requests
     this.app.use(this.limiter);
