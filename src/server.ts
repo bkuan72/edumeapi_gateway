@@ -1,3 +1,4 @@
+import 'dotenv/config'; // loads the .env environment
 import { RoutesController } from './server/controllers/route.controller';
 import { PropertiesController } from './server/controllers/properties.controller';
 import { BlacklistController } from './server/controllers/blacklist.controller';
