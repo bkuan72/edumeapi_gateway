@@ -1,3 +1,4 @@
+import { RoutesController } from './server/controllers/route.controller';
 import { PropertiesController } from './server/controllers/properties.controller';
 import { BlacklistController } from './server/controllers/blacklist.controller';
 import { TokensController } from './server/controllers/tokens.controller';
@@ -6,8 +7,6 @@ import { UserAccountsController } from './server/controllers/userAccounts.contro
 import { AccountsController } from './server/controllers/accounts.controller';
 import { UsersController } from './server/controllers/users.controller';
 import SysEnv from './modules/SysEnv';
-const express = require('express')
-const httpProxy = require('express-http-proxy')
 import validateEnv from './utils/validateEnv';
 import toobusy_js from 'toobusy-js';
 import * as cron from 'node-cron';
@@ -17,6 +16,8 @@ import { blacklist_tokens_schema_table, tokens_schema_table } from './schemas/to
 import App from './app';
 import AuthenticationController from './server/controllers/authentication.controller';
 
+import { setupProxies } from './modules/proxy.module';
+
 // validate that all required environment variable is present
 SysEnv.init();
 validateEnv();
@@ -24,6 +25,7 @@ validateEnv();
 const blacklistTokens = new TokenModel(blacklist_tokens_schema_table);
 const port = SysEnv.PORT;
 const tokens = new TokenModel(tokens_schema_table);
+
 
 
 SysLog.info('Cron setup to purge expired blacklistTokens every minute')
@@ -54,8 +56,11 @@ const app = new App (
       new TokensController(),
       new BlacklistController(),
       new PropertiesController(),
+      new RoutesController()
     ],
     port);
+
+setupProxies(app);
 
 app.listen();
 

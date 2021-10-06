@@ -43,7 +43,7 @@ class App {
 
   constructor(controllers: any, port: number) {
     this.properties = new PropertyModel();
-    this.app = express();
+    this.app = express.default();
     this.port = port;
     this.connectToTheDatabase();
     this.initializeMiddlewares();

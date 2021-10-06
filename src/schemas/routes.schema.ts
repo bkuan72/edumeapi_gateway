@@ -30,27 +30,24 @@ export const routes_schema: schemaIfc[] = [
     default: 'OK',
     description: 'Status of record'
   },
-  {    fieldName: 'url',
-  sqlType: 'VARCHAR',
+  {    fieldName: 'url_path',
+  sqlType: 'VARCHAR(256)',
   size: 256,
   allowNull: false,
   default: '',
   excludeFromUpdate: true,
-  trim: true,
   description: 'route identifier url'
   },
   {
     fieldName: 'auth',
     sqlType: 'BOOLEAN',
     default: '0',
-    excludeFromUpdate: false,
     description: 'authorization required'
   },
   {
     fieldName: 'license_check',
     sqlType: 'BOOLEAN',
     default: '0',
-    excludeFromUpdate: false,
     description: 'license check required'
   },
   {
@@ -61,7 +58,7 @@ export const routes_schema: schemaIfc[] = [
     description: 'request rate limit'
   },
   {    fieldName: 'proxy_target',
-  sqlType: 'VARCHAR',
+  sqlType: 'VARCHAR(256)',
   size: 256,
   allowNull: true,
   excludeFromUpdate: false,
@@ -76,7 +73,7 @@ export const routes_schema: schemaIfc[] = [
     description: 'change url origin'
   },
   {    fieldName: 'proxy_path_rewrite',
-  sqlType: 'VARCHAR',
+  sqlType: 'VARCHAR(256)',
   size: 256,
   allowNull: true,
   excludeFromUpdate: false,
@@ -94,7 +91,7 @@ export const routes_schema: schemaIfc[] = [
     index: [
       {
         name: 'routes_url_idx',
-        columns: ['site_code', 'url'],
+        columns: ['site_code', 'url_path'],
         unique: true
       },
       {
