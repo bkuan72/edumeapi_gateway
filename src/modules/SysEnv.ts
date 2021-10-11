@@ -127,7 +127,13 @@ export class SystemEnvironment {
             this.DEFAULT_PROXY_TARGET_PATH = process.env.DEFAULT_PROXY_TARGET_PATH;
         }
         if (process.env.DEFAULT_PROXY_LOG_LEVEL !== undefined) {
-            this.DEFAULT_PROXY_LOG_LEVEL = process.env.DEFAULT_PROXY_LOG_LEVEL;
+            if (process.env.DEFAULT_PROXY_LOG_LEVEL === 'debug' ||
+            process.env.DEFAULT_PROXY_LOG_LEVEL === 'info' ||
+            process.env.DEFAULT_PROXY_LOG_LEVEL === 'warn' ||
+            process.env.DEFAULT_PROXY_LOG_LEVEL === 'error' ||
+            process.env.DEFAULT_PROXY_LOG_LEVEL === 'silent') {
+                this.DEFAULT_PROXY_LOG_LEVEL = process.env.DEFAULT_PROXY_LOG_LEVEL;
+            }
         }
     }
     CookieAuth(): boolean {
