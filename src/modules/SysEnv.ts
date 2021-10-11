@@ -22,6 +22,10 @@ export class SystemEnvironment {
     TOOBUSY_MAX_LAG: number;
     TOOBUSY_CHECK_INTERVAL: number;
 
+    DEFAULT_PROXY_PATH: string | undefined;
+    DEFAULT_PROXY_TARGET_PATH: string | undefined;
+    DEFAULT_PROXY_LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error' | 'silent';
+
     private COOKIE_AUTH: string;
 
     constructor () {
@@ -47,7 +51,7 @@ export class SystemEnvironment {
         this.MAILER_PRODUCT_RESET_PWD_LINK = '';          // MailGen product.link - URL to API for reset password confirmation
         this.TOOBUSY_MAX_LAG = 1000;            // maximum lag tolerable in ms
         this.TOOBUSY_CHECK_INTERVAL = 500;      // check interval in ms
-
+        this.DEFAULT_PROXY_LOG_LEVEL = "error";
     }
     init(): void {
         if (process.env.DB_HOST !== undefined) {
@@ -115,6 +119,15 @@ export class SystemEnvironment {
         }
         if (process.env.TOOBUSY_CHECK_INTERVAL !== undefined) {
             this.TOOBUSY_CHECK_INTERVAL = parseInt(process.env.TOOBUSY_CHECK_INTERVAL);
+        }
+        if (process.env.DEFAULT_PROXY_PATH !== undefined) {
+            this.DEFAULT_PROXY_PATH = process.env.DEFAULT_PROXY_PATH;
+        }
+        if (process.env.DEFAULT_PROXY_TARGET_PATH !== undefined) {
+            this.DEFAULT_PROXY_TARGET_PATH = process.env.DEFAULT_PROXY_TARGET_PATH;
+        }
+        if (process.env.DEFAULT_PROXY_LOG_LEVEL !== undefined) {
+            this.DEFAULT_PROXY_LOG_LEVEL = process.env.DEFAULT_PROXY_LOG_LEVEL;
         }
     }
     CookieAuth(): boolean {

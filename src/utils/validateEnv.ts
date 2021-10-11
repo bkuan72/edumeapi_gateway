@@ -2,7 +2,7 @@
 import {
     cleanEnv, str, port, num
   } from 'envalid';
-   
+
   function validateEnv() {
     cleanEnv(process.env, {
         DB_HOST: str(),
@@ -25,6 +25,9 @@ import {
         MAILER_PRODUCT_NAME: str(),
         MAILER_PRODUCT_REGISTRATION_LINK: str(),
         MAILER_PRODUCT_RESET_PWD_LINK: str(),
+        DEFAULT_PROXY_PATH: str(),
+        DEFAULT_PROXY_TARGET_PATH: str(),
+        DEFAULT_PROXY_LOG_LEVEL: str(),
     });
   }
 

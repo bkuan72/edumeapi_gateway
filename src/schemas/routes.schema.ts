@@ -36,13 +36,31 @@ export const routes_schema: schemaIfc[] = [
   allowNull: false,
   default: '',
   excludeFromUpdate: true,
-  description: 'route identifier url'
+  description: 'route identifier url path'
   },
   {
     fieldName: 'auth',
     sqlType: 'BOOLEAN',
     default: '0',
     description: 'authorization required'
+  },
+  {
+    fieldName: 'auth_admin',
+    sqlType: 'BOOLEAN',
+    default: '0',
+    description: 'admin authorization required'
+  },
+  {
+    fieldName: 'auth_dev',
+    sqlType: 'BOOLEAN',
+    default: '0',
+    description: 'dev authorization required'
+  },
+  {
+    fieldName: 'auth_user_account',
+    sqlType: 'BOOLEAN',
+    default: '0',
+    description: 'user account authorization required'
   },
   {
     fieldName: 'license_check',
