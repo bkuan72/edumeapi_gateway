@@ -49,7 +49,7 @@ export const setupProxies = async (expressApp: App): Promise<void> => {
     if (SysEnv.DEFAULT_PROXY_PATH != undefined && SysEnv.DEFAULT_PROXY_TARGET_PATH != undefined) {
         const proxy:Options = {
             target: SysEnv.DEFAULT_PROXY_TARGET_PATH,
-            changeOrigin: false,
+            changeOrigin: true,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             onError:(err: Error, _req: IncomingMessage, _res: ServerResponse, _target?: string | Partial<Url> | undefined) => {
                 console.error(err);
