@@ -56,8 +56,7 @@ const app = new App (
       new LogsController(),
       new TokensController(),
       new BlacklistController(),
-      new PropertiesController(),
-      new RoutesController()
+      new PropertiesController()
     ],
     port);
 
