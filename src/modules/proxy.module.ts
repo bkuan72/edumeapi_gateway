@@ -1,4 +1,3 @@
-import { RouteModel } from '../server/models/route.model';
 import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import App from '../app';
 import authMiddleware from '../middleware/auth.middleware';
@@ -8,11 +7,12 @@ import validationUserAccountMiddleware from '../middleware/validate.userAccount.
 import SysEnv from './SysEnv';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Url } from 'url';
+import { RouterService } from '../services/router.service';
 
 
 export const setupProxies = async (expressApp: App): Promise<void> => {
-    const routes = new RouteModel();
-    const ROUTES = await routes.getAllRoutes();
+    const routes = new RouterService();
+    const ROUTES = await routes.getRoutes();
 
     ROUTES.forEach(r => {
         if (r.auth_user_account) {

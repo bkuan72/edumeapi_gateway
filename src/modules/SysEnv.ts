@@ -26,6 +26,9 @@ export class SystemEnvironment {
     DEFAULT_PROXY_TARGET_PATH: string | undefined;
     DEFAULT_PROXY_LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error' | 'silent';
 
+    ROUTER_SERVICE: string;
+    ROUTER_SERVICE_PORT: string;
+
     private COOKIE_AUTH: string;
 
     constructor () {
@@ -52,6 +55,8 @@ export class SystemEnvironment {
         this.TOOBUSY_MAX_LAG = 1000;            // maximum lag tolerable in ms
         this.TOOBUSY_CHECK_INTERVAL = 500;      // check interval in ms
         this.DEFAULT_PROXY_LOG_LEVEL = 'error';
+        this.ROUTER_SERVICE = 'edume_router';
+        this.ROUTER_SERVICE_PORT = '3032';
     }
     init(): void {
         if (process.env.DB_HOST !== undefined) {
@@ -134,6 +139,12 @@ export class SystemEnvironment {
             process.env.DEFAULT_PROXY_LOG_LEVEL === 'silent') {
                 this.DEFAULT_PROXY_LOG_LEVEL = process.env.DEFAULT_PROXY_LOG_LEVEL;
             }
+        }
+        if (process.env.ROUTER_SERVICE !== undefined) {
+            this.ROUTER_SERVICE = process.env.ROUTER_SERVICE;
+        }
+        if (process.env.ROUTER_SERVICE_PORT !== undefined) {
+            this.ROUTER_SERVICE_PORT = process.env.ROUTER_SERVICE_PORT;
         }
     }
     CookieAuth(): boolean {

@@ -28,6 +28,8 @@ import {
         DEFAULT_PROXY_PATH: str(),
         DEFAULT_PROXY_TARGET_PATH: str(),
         DEFAULT_PROXY_LOG_LEVEL: str(),
+        ROUTER_SERVICE: str(),
+        ROUTER_SERVICE_PORT: str()
     });
   }
 
