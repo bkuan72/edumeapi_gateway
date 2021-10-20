@@ -55,7 +55,7 @@ export class SystemEnvironment {
         this.TOOBUSY_MAX_LAG = 1000;            // maximum lag tolerable in ms
         this.TOOBUSY_CHECK_INTERVAL = 500;      // check interval in ms
         this.DEFAULT_PROXY_LOG_LEVEL = 'error';
-        this.ROUTER_SERVICE = 'edume_router';
+        this.ROUTER_SERVICE = 'localhost';
         this.ROUTER_SERVICE_PORT = '3032';
     }
     init(): void {
