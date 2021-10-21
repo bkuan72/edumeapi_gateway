@@ -15,31 +15,51 @@ export const setupProxies = async (expressApp: App): Promise<void> => {
     const ROUTES = await routes.getRoutes();
 
     ROUTES.forEach(r => {
+        const proxy:Options = {
+            target: r.proxy_target,
+            changeOrigin: r.proxy_change_origin,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            onError:(err: Error, _req: IncomingMessage, _res: ServerResponse, _target?: string | Partial<Url> | undefined) => {
+                console.error(err);
+                console.error(_req);
+                console.error(_res);
+                console.error(_target);
+            },
+            logLevel: SysEnv.DEFAULT_PROXY_LOG_LEVEL
+        }
         if (r.auth_user_account) {
             if (r.auth_admin) {
-                expressApp.app.use(r.url_path, adminAuthMiddleware, validationUserAccountMiddleware, createProxyMiddleware(r.proxy));
+                console.log('URL Path: ' + r.url_path + ' ADMIN AUTH and USER ACCOUNT AUTH');
+                expressApp.app.use(r.url_path, adminAuthMiddleware, validationUserAccountMiddleware, createProxyMiddleware(proxy));
             } else {
                 if (r.auth_dev) {
-                    expressApp.app.use(r.url_path, devAuthMiddleware, validationUserAccountMiddleware, createProxyMiddleware(r.proxy));
+                    console.log('URL Path: ' + r.url_path + ' DEV AUTH and USER ACCOUNT AUTH');
+                    expressApp.app.use(r.url_path, devAuthMiddleware, validationUserAccountMiddleware, createProxyMiddleware(proxy));
                 } else {
                     if (r.auth) {
-                        expressApp.app.use(r.url_path, authMiddleware, validationUserAccountMiddleware, createProxyMiddleware(r.proxy));
+                        console.log('URL Path: ' + r.url_path + ' NORMAL AUTH and USER ACCOUNT AUTH');
+                        expressApp.app.use(r.url_path, authMiddleware, validationUserAccountMiddleware, createProxyMiddleware(proxy));
                     } else {
-                        expressApp.app.use(r.url_path, validationUserAccountMiddleware, createProxyMiddleware(r.proxy));
+                        console.log('URL Path: ' + r.url_path + ' USER ACCOUNT AUTH ONLY');
+                        expressApp.app.use(r.url_path, validationUserAccountMiddleware, createProxyMiddleware(proxy));
                     }
                 }
             }
         } else {
             if (r.auth_admin) {
-                expressApp.app.use(r.url_path, adminAuthMiddleware, createProxyMiddleware(r.proxy));
+                console.log('URL Path: ' + r.url_path + ' ADMIN AUTH');
+                expressApp.app.use(r.url_path, adminAuthMiddleware, createProxyMiddleware(proxy));
             } else {
                 if (r.auth_dev) {
-                    expressApp.app.use(r.url_path, devAuthMiddleware, createProxyMiddleware(r.proxy));
+                    console.log('URL Path: ' + r.url_path + ' DEV AUTH');
+                    expressApp.app.use(r.url_path, devAuthMiddleware, createProxyMiddleware(proxy));
                 } else {
                     if (r.auth) {
-                        expressApp.app.use(r.url_path, authMiddleware, createProxyMiddleware(r.proxy));
+                        console.log('URL Path: ' + r.url_path + ' NORMAL AUTH');
+                        expressApp.app.use(r.url_path, authMiddleware, createProxyMiddleware(proxy));
                     } else {
-                        expressApp.app.use(r.url_path, createProxyMiddleware(r.proxy));
+                        console.log('URL Path: ' + r.url_path + ' NO AUTH');
+                        expressApp.app.use(r.url_path, createProxyMiddleware(proxy));
                     }
                 }
             }
