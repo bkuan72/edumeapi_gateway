@@ -67,7 +67,7 @@ async function devAuthMiddleware(request: Request, _response: Response, next: Ne
       next(new WrongAuthenticationTokenException());
     }
   } else {
-    SysLog.error('Missing Authorization: ', request)
+    SysLog.error('Missing Dev Authorization: ', request)
     next(new AuthenticationTokenMissingException());
   }
 }

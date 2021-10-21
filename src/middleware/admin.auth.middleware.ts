@@ -67,7 +67,7 @@ async function adminAuthMiddleware(request: Request, _response: Response, next: 
       next(new WrongAuthenticationTokenException());
     }
   } else {
-    SysLog.error('Missing Authorization: ', request)
+    SysLog.error('Missing Admin Authorization: ', request)
     next(new AuthenticationTokenMissingException());
   }
 }
