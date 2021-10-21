@@ -28,10 +28,12 @@ export class RouterService {
 
                 res.on('data', d => {
                     body.push(d);
+                })
+                res.on('end', () => {
                     const data = Buffer.concat(body).toString();
                     console.info(data);
                     routes = JSON.parse(data);
-                    console.info(data);
+                    console.info(routes);
                     resolve(routes);
                 });
             });
