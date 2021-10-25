@@ -9,6 +9,7 @@ interface DataStoredInToken {
   createTimeStamp: string;
   expiryInSec: number;
   roles: UserModuleRoleDataDTO[];
+  accounts: string[]; // account ids
 }
 
 export default DataStoredInToken;

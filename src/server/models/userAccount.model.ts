@@ -46,6 +46,7 @@ export class UserAccountModel extends EntityModel {
       const userAccountTypes: any[] = [];
       let sql = 'SELECT ' + accounts_schema_table+ '.account_type';
       sql += ', BIN_TO_UUID(' + userAccounts_schema_table +'.user_id)';
+      sql += ', BIN_TO_UUID(' + userAccounts_schema_table +'.account_id)';
       sql += ', BIN_TO_UUID(' + userAccounts_schema_table +'.id)';
       sql += ' FROM '+ userAccounts_schema_table;
       sql += ' INNER JOIN ' + accounts_schema_table + ' ON ' + userAccounts_schema_table + '.account_id = ' + accounts_schema_table + '.id'
@@ -64,6 +65,7 @@ export class UserAccountModel extends EntityModel {
           const userAccount = SqlFormatter.transposeColumnResultSet(
             ['account_type',
             'user_id',
+            'account_id',
             'id'],
             data
           )
@@ -127,6 +129,36 @@ export class UserAccountModel extends EntityModel {
       .catch((err) => {
         SysLog.error(JSON.stringify(err));
         resolve(userAccountTypes);
+        return;
+      });
+    });
+  };
+
+  getAccountIdsByUserId = async (siteCode: string, userId: string, status: string): Promise<any[]> => {
+    return new Promise((resolve) => {
+      const userAccountIds: string[] = [];
+      let sql = 'SELECT ' + 'BIN_TO_UUID(' + userAccounts_schema_table +'.account_id) '
+      sql += ' FROM '+ userAccounts_schema_table;
+      sql += ' INNER JOIN ' + accounts_schema_table + ' ON ' + userAccounts_schema_table + '.account_id = ' + accounts_schema_table + '.id'
+      sql += ' WHERE ' + userAccounts_schema_table+ '.site_code = ' + SqlStr.escape(siteCode) + ' AND ';
+      sql += userAccounts_schema_table+ '.status = ' + SqlStr.escape(status) + ' AND ';
+      sql += SqlStr.format(userAccounts_schema_table+ '.user_id = UUID_TO_BIN(?);', [userId]);
+      dbConnection.DB.sql(sql).execute()
+      .then((result) => {
+        if (result.rows.length == 0) {
+          // not found account with user id
+          resolve(userAccountIds);
+          return;
+        }
+        SysLog.info('get user accounts with id: ', userId);
+        result.rows.forEach(rowData => {
+          userAccountIds.push(rowData[0]);
+        });
+        resolve(userAccountIds);
+      })
+      .catch((err) => {
+        SysLog.error(JSON.stringify(err));
+        resolve(userAccountIds);
         return;
       });
     });

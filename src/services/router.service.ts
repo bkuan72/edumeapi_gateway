@@ -1,5 +1,4 @@
 import http  from 'http';
-import { URL } from 'url';
 import SysEnv from '../modules/SysEnv';
 
 export class RouterService {
@@ -19,7 +18,7 @@ export class RouterService {
                 host: SysEnv.ROUTER_SERVICE + ':' + SysEnv.ROUTER_SERVICE_PORT,
                 hostname: SysEnv.ROUTER_SERVICE,
                 port: SysEnv.ROUTER_SERVICE_PORT,
-                path: '/api/routes',
+                path: '/api/routes/all',
                 method: 'GET',
               }
               console.info(options)

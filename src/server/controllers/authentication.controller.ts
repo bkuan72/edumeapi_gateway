@@ -96,6 +96,7 @@ class AuthenticationController implements Controller {
       const generateToken = (adminUser: boolean, 
                              devUser: boolean, 
                              bizUser: boolean,
+                             accountIds: string[],
                              userRoles: UserModuleRoleDataDTO[]) => {
         const expiresIn = this.tokenExpireInMin * 60; // convert to seconds
         const timestamp = new Date();
@@ -108,7 +109,8 @@ class AuthenticationController implements Controller {
           site_code: this.siteCode,
           createTimeStamp: timestamp.toUTCString(),
           expiryInSec: expiresIn,
-          roles: userRoles
+          roles: userRoles,
+          accounts: accountIds,
         };
         const authorization = jwt.sign(dataStoredInToken, SysEnv.JWT_SECRET, {
           expiresIn
@@ -121,11 +123,13 @@ class AuthenticationController implements Controller {
         });
       };
       this.userModuleRoles.getUserModuleRoles(this.siteCode, user.id).then((userRoles) => {
+        const accountIds: any[] = [];
         this.userAccounts
         .getUserAccountTypes(this.siteCode,
           user.id,
           'OK')
         .then((userAccountTypes) => {
+
           if (userAccountTypes && userAccountTypes.length > 0) {
             let adminUser = false;
             let devUser = false;
@@ -140,14 +144,15 @@ class AuthenticationController implements Controller {
               if (accountType.account_type == 'SERVICE') {
                 bizUser = true;
               }
+              accountIds.push(accountType.account_id);
             })
-            generateToken(adminUser, devUser, bizUser, userRoles);
+            generateToken(adminUser, devUser, bizUser, accountIds, userRoles);
           } else {
-            generateToken(false, false, false, userRoles);
+            generateToken(false, false, false, accountIds, userRoles);
           }
         })
         .catch(() => {
-          generateToken(false, false, false, userRoles);
+          generateToken(false, false, false, accountIds, userRoles);
         });
       });
     });
