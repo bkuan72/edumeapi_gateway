@@ -49,13 +49,13 @@ cronTasks.forEach((task) => {
 const app = new App (
     [
       new AuthenticationController(),
-      new UsersController(),
-      new AccountsController(),
-      new UserAccountsController(),
-      new LogsController(),
-      new TokensController(),
-      new BlacklistController(),
-      new PropertiesController()
+      // new UsersController(),
+      // new AccountsController(),
+      // new UserAccountsController(),
+      // new LogsController(),
+      // new TokensController(),
+      // new BlacklistController(),
+      // new PropertiesController()
     ],
     port);
 
