@@ -30,10 +30,11 @@ export const setupProxies = async (expressApp: App): Promise<void> => {
             onProxyReq: (proxyReq: any, req: any, res: any) => {
                 if ( (req.method == "POST" || req.method == "PUT" || req.method == "PATCH")
                     && req.body ) {
-                    proxyReq.setHeader( 'content-length', req.body.length );
-
+                    const reqBody = JSON.stringify(req.body);
+                    // proxyReq.setHeader( 'content-length', reqBody.length );
+                    // proxyReq.setHeader( 'Content-Type', 'application/json; charset=utf-8' );
                     // Write out body changes to the proxyReq stream
-                    proxyReq.write( req.body );
+                    proxyReq.write( reqBody );
                     proxyReq.end();
                 }
             },
@@ -107,8 +108,10 @@ export const setupProxies = async (expressApp: App): Promise<void> => {
                     console.debug(req);
                     console.debug('PROXY RESPONSE:');
                     console.debug(res);
+                    console.debug('PROXY REQUEST BODY:');
                     console.debug(reqBody);
-                    proxyReq.setHeader( 'content-length', reqBody.length );
+                    // proxyReq.setHeader( 'content-length', reqBody.length );
+                    // proxyReq.setHeader( 'Content-Type', 'application/json; charset=utf-8' );
 
                     // Write out body changes to the proxyReq stream
                     proxyReq.write( reqBody );
