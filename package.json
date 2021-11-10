@@ -60,12 +60,12 @@
     "typescript": "^3.9.7"
   },
   "scripts": {
-    "run-build": "node --trace-warnings www/server.js",
+    "run-build": "node --trace-warnings server.js",
     "start": "npm run build && node build/server.js",
     "start-debug": "npm run build && node -r dotenv/config build/server.js dotenv_config_path=./.env.debug",
     "start-debug:dev": "nodemon  -r dotenv/config dotenv_config_path=./.env.debug",
     "start:dev": "nodemon ",
-    "build": "rimraf ./build && tsc && copy package*.json build",
+    "build": "rimraf ./build && tsc",
     "lint": "eslint . --ext .ts",
     "prettier-format": "prettier --config .prettierrc src/**/*.ts --write",
     "prettier-watch": "onchange 'src/**/*.ts' -- prettier --write {{changed}}"
