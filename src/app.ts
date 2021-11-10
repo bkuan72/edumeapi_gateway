@@ -41,13 +41,12 @@ class App {
   public logger: any;
   private properties: PropertyModel;
 
-  constructor(controllers: any, port: number) {
+  constructor(port: number) {
     this.properties = new PropertyModel();
     this.app = express.default();
     this.port = port;
     this.connectToTheDatabase();
     this.initializeMiddlewares();
-    this.initializeControllers(controllers);
     // The default maxLag value is 70ms, and the default check interval is 500ms.
     // This allows an "average" server to run at 90-100% CPU and keeps request latency
     // at around 200ms. For comparison, a maxLag value of 10ms results in 60-70% CPU usage,
@@ -83,8 +82,8 @@ class App {
     // this.app.use(express.multipart({ limit:"10mb" }));
     // this.app.use(express.limit("5kb")); // this will be valid for every other content type
     this.app.use(this.loggerMiddleware);
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
+    // this.app.use(express.json());
+    // this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
     //  apply to all requests
     this.app.use(this.limiter);
@@ -96,12 +95,6 @@ class App {
         next();
       }
     })
-  }
-
-  private initializeControllers(controllers: any[]) {
-    controllers.forEach((controller: { router: import("express-serve-static-core").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs>; }) => {
-      this.app.use('/api', controller.router);
-    });
   }
 
   private createDefaultProperties(index: number): Promise<void> {

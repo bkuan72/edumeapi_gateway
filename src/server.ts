@@ -1,11 +1,4 @@
 import 'dotenv/config'; // loads the .env environment
-import { PropertiesController } from './server/controllers/properties.controller';
-import { BlacklistController } from './server/controllers/blacklist.controller';
-import { TokensController } from './server/controllers/tokens.controller';
-import { LogsController } from './server/controllers/logs.controller';
-import { UserAccountsController } from './server/controllers/userAccounts.controller';
-import { AccountsController } from './server/controllers/accounts.controller';
-import { UsersController } from './server/controllers/users.controller';
 import SysEnv from './modules/SysEnv';
 import validateEnv from './utils/validateEnv';
 import toobusy_js from 'toobusy-js';
@@ -46,22 +39,14 @@ cronTasks.forEach((task) => {
 });
 
 
-const app = new App (
-    [
-      new AuthenticationController(),
-      // new UsersController(),
-      // new AccountsController(),
-      // new UserAccountsController(),
-      // new LogsController(),
-      // new TokensController(),
-      // new BlacklistController(),
-      // new PropertiesController()
-    ],
-    port);
+const expressApp = new App (port);
+// insert  authentication controller into stack
 
-setupProxies(app);
+const authCtrl = new AuthenticationController ();
+expressApp.app.use('/api/auth', authCtrl.router);
+setupProxies(expressApp);
 
-app.listen();
+expressApp.listen();
 
 process.on('SIGINT', function() {
   // app.close();

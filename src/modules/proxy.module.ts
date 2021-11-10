@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import App from '../app';
 import authMiddleware from '../middleware/auth.middleware';
@@ -18,12 +19,23 @@ export const setupProxies = async (expressApp: App): Promise<void> => {
         const proxy:Options = {
             target: r.proxy_target,
             changeOrigin: r.proxy_change_origin,
+            toProxy: true,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             onError:(err: Error, _req: IncomingMessage, _res: ServerResponse, _target?: string | Partial<Url> | undefined) => {
                 console.error(err);
                 console.error(_req);
                 console.error(_res);
                 console.error(_target);
+            },
+            onProxyReq: (proxyReq: any, req: any, res: any) => {
+                if ( (req.method == "POST" || req.method == "PUT" || req.method == "PATCH")
+                    && req.body ) {
+                    proxyReq.setHeader( 'content-length', req.body.length );
+
+                    // Write out body changes to the proxyReq stream
+                    proxyReq.write( req.body );
+                    proxyReq.end();
+                }
             },
             logLevel: SysEnv.DEFAULT_PROXY_LOG_LEVEL
         }
@@ -66,16 +78,42 @@ export const setupProxies = async (expressApp: App): Promise<void> => {
         }
 
     });
+
+
     if (SysEnv.DEFAULT_PROXY_PATH != undefined && SysEnv.DEFAULT_PROXY_TARGET_PATH != undefined) {
         const proxy:Options = {
             target: SysEnv.DEFAULT_PROXY_TARGET_PATH,
-            changeOrigin: true,
+            changeOrigin: false,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             onError:(err: Error, _req: IncomingMessage, _res: ServerResponse, _target?: string | Partial<Url> | undefined) => {
+                console.debug('ERROR:');
                 console.error(err);
+                console.debug('ERROR REQUEST:');
                 console.error(_req);
+                console.debug('ERROR RESPONSE:');
                 console.error(_res);
+                console.debug('ERROR TARGET:');
                 console.error(_target);
+            },
+            onProxyReq: (proxyReq: any, req: any, res: any) => {
+                if ( (req.method == "POST" || req.method == "PUT" || req.method == "PATCH")
+                    && req.body ) {
+
+                    const reqBody = JSON.stringify(req.body);
+                    // add custom header to request
+                    console.debug('PROXY REQ:');
+                    console.debug(proxyReq);
+                    console.debug('PROXY REQUEST:');
+                    console.debug(req);
+                    console.debug('PROXY RESPONSE:');
+                    console.debug(res);
+                    console.debug(reqBody);
+                    proxyReq.setHeader( 'content-length', reqBody.length );
+
+                    // Write out body changes to the proxyReq stream
+                    proxyReq.write( reqBody );
+                    proxyReq.end();
+                }
             },
             logLevel: SysEnv.DEFAULT_PROXY_LOG_LEVEL
         }

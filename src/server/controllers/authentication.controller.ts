@@ -57,36 +57,36 @@ class AuthenticationController implements Controller {
     this.initializeRoutes();
   }
   private initializeRoutes() {
-    this.router.post(`${this.path}/logout`, authMiddleware, this.loggingOut);
+    this.router.post(`/logout`, authMiddleware, this.loggingOut);
     this.router.post(
       `${this.path}/renew/token`,
       authMiddleware,
       this.renewAuthCookie
     );
     this.router.post(
-      `${this.path}/register`,
+      `/register`,
       validationUserRegistrationMiddleware(users_schema),
       this.registration
     );
     this.router.post(
-      `${this.path}/login`,
+      `/login`,
       validationMiddleware(loginDTO_schema),
       this.loggingIn
     );
     this.router.get(
-      `${this.path}/confirm/byEmailNRegConfirmKey/:email/:regConfirmKey`,
+      `/confirm/byEmailNRegConfirmKey/:email/:regConfirmKey`,
       this.confirmRegistration
     );
     this.router.get(
-      `${this.path}/resetPassword/byEmail/:email`,
+      `/resetPassword/byEmail/:email`,
       this.setResetPasswordKeyNSendConfirmation
     );
     this.router.get(
-      `${this.path}/confirm/byEmailResetPasswordKey/:email/:resetPasswordKey`,
+      `/confirm/byEmailResetPasswordKey/:email/:resetPasswordKey`,
       this.validateResetPasswordKey
     );
     this.router.get(
-      `${this.path}/resetPassword/byEmailNresetConfirmKeyNnewPassword/:email/:resetPasswordKey/:newPassword`,
+      `/resetPassword/byEmailNresetConfirmKeyNnewPassword/:email/:resetPasswordKey/:newPassword`,
       this.resetPassword
     );
   }
