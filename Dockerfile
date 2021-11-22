@@ -16,4 +16,4 @@ COPY package*.json /app/edumeapi_gateway
 RUN npm install && npm i -g nodemon 
 
 CMD [ "npm", "run", "run-build" ]
-EXPOSE 3301
+EXPOSE 33001

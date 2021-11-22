@@ -30,6 +30,12 @@ export class SystemEnvironment {
     ROUTER_SERVICE_PORT: string;
     PROXY_TARGET: string;
 
+    PROPERTY_SERVICE: string;
+    PROPERTY_SERVICE_PORT: string;
+    
+    USER_ACC_MOD_ROLE_SERVICE: string;
+    USER_ACC_MOD_ROLE_SERVICE_PORT: string;
+    
     private COOKIE_AUTH: string;
 
     constructor () {
@@ -37,7 +43,7 @@ export class SystemEnvironment {
         this.DB_USER = 'webservice';            // database user id
         this.DB_PASSWORD = ''                   // database password
         this.DB_NAME = 'testdb';                // database name
-        this.DB_PORT = '33000';                    // database port
+        this.DB_PORT = '3306';                    // database port
         this.PORT = 3000;                       // this server port
         this.JWT_SECRET = '';                   // JWT secret key
         this.DB_BCRYPT_SALT = 10;               // Bcrypt salt number
@@ -59,6 +65,10 @@ export class SystemEnvironment {
         this.ROUTER_SERVICE = 'localhost';
         this.ROUTER_SERVICE_PORT = '3032';
         this.PROXY_TARGET = '';
+        this.PROPERTY_SERVICE = 'localhost';
+        this.PROPERTY_SERVICE_PORT = '33003';
+        this.USER_ACC_MOD_ROLE_SERVICE = 'localhost';
+        this.USER_ACC_MOD_ROLE_SERVICE_PORT = '33003';
     }
     init(): void {
         if (process.env.DB_HOST !== undefined) {
@@ -150,6 +160,18 @@ export class SystemEnvironment {
         }
         if (process.env.PROXY_TARGET !== undefined) {
             this.PROXY_TARGET = process.env.PROXY_TARGET;
+        }
+        if (process.env.PROPERTY_SERVICE !== undefined) {
+            this.PROPERTY_SERVICE = process.env.PROPERTY_SERVICE;
+        }
+        if (process.env.PROPERTY_SERVICE_PORT !== undefined) {
+            this.PROPERTY_SERVICE_PORT = process.env.PROPERTY_SERVICE_PORT;
+        }
+        if (process.env.USER_ACC_MOD_ROLE_SERVICE !== undefined) {
+            this.USER_ACC_MOD_ROLE_SERVICE = process.env.USER_ACC_MOD_ROLE_SERVICE;
+        }
+        if (process.env.USER_ACC_MOD_ROLE_SERVICE_PORT !== undefined) {
+            this.USER_ACC_MOD_ROLE_SERVICE_PORT = process.env.USER_ACC_MOD_ROLE_SERVICE_PORT;
         }
     }
     CookieAuth(): boolean {

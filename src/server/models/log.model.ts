@@ -4,7 +4,7 @@
 import { SqlFormatter } from '../../modules/sql.strings';
 import SqlStr = require('sqlstring');
 import e = require('express');
-import dbConnection from '../../modules/DbModule';
+import appDbConnection from '../../modules/AppDBModule';
 import { logs_schema, logs_schema_table } from '../../schemas/logs.schema';
 import { LogDTO } from '../../dtos/logs.DTO';
 import { uuidIfc } from '../../interfaces/uuidIfc';
@@ -33,29 +33,30 @@ export class LogModel extends EntityModel {
       sql += SqlStr.format('EntryDate = ?', [logDate])
       SysLog.info('findByLogDate SQL: ' + sql) + ' AND ';
       sql = SqlFormatter.formatWhereAND(sql, {site_code: this.siteCode}, this.tableName, this.schema);
-      dbConnection.DB.sql(sql).execute()
-      .then((result) => {
- 
-        if (result.rows.length) {
-          result.rows.forEach((rowData) => {
-            const data = SqlFormatter.transposeResultSet(this.schema,
-              undefined,
-              undefined,
-              rowData);
-              const respEntityDTO = new this.responseDTO(data);
-              respEntityDTOArray.push(respEntityDTO);
-          });
+      appDbConnection.connectDB().then((DBSession) => {
+        DBSession.sql(sql).execute()
+        .then((result) => {
+          if (result.rows.length) {
+            result.rows.forEach((rowData) => {
+              const data = SqlFormatter.transposeResultSet(this.schema,
+                undefined,
+                undefined,
+                rowData);
+                const respEntityDTO = new this.responseDTO(data);
+                respEntityDTOArray.push(respEntityDTO);
+            });
+              resolve(respEntityDTOArray);
+              return;
+            }
+            // not found Customer with the id
             resolve(respEntityDTOArray);
-            return;
-          }
-          // not found Customer with the id
+        })
+        .catch((err) => {
+          SysLog.error(JSON.stringify(err));
           resolve(respEntityDTOArray);
-      })
-      .catch((err) => {
-        SysLog.error(JSON.stringify(err));
-        resolve(respEntityDTOArray);
-        return;
-      })
+          return;
+        })
+      });
     });
   };
 }

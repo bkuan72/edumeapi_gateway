@@ -6,7 +6,7 @@ import { accounts_schema } from './../../schemas/accounts.schema';
 import { SqlFormatter } from '../../modules/sql.strings';
 import SqlStr = require('sqlstring');
 import e = require('express');
-import dbConnection from '../../modules/DbModule';
+import appDbConnection from '../../modules/AppDBModule';
 import { UserAccountsData, userAccounts_schema, userAccounts_schema_table } from '../../schemas/userAccounts.schema';
 import { uuidIfc } from '../../interfaces/uuidIfc';
 import { UserAccountDataDTO, UserAccountsDTO } from '../../dtos/userAccounts.DTO';
@@ -53,31 +53,34 @@ export class UserAccountModel extends EntityModel {
       sql += ' WHERE ' + userAccounts_schema_table+ '.site_code = ' + SqlStr.escape(siteCode) + ' AND ';
       sql += userAccounts_schema_table+ '.status = ' + SqlStr.escape(status) + ' AND ';
       sql += SqlStr.format(userAccounts_schema_table+ '.user_id = UUID_TO_BIN(?);', [userId]);
-      dbConnection.DB.sql(sql).execute()
-      .then((result) => {
-        if (result.rows.length == 0) {
-          // not found Customer with the id
+      appDbConnection.connectDB().then((DBSession) => {
+        DBSession.sql(sql).execute()
+        .then((result) => {
+          if (result.rows.length == 0) {
+            // not found Customer with the id
+            resolve(userAccountTypes);
+            return;
+          }
+          SysLog.info('get user accounts with id: ', userId);
+          result.rows.forEach(data => {
+            const userAccount = SqlFormatter.transposeColumnResultSet(
+              ['account_type',
+              'user_id',
+              'account_id',
+              'id'],
+              data
+            )
+            userAccountTypes.push(userAccount);
+          });
+          resolve(userAccountTypes);
+        })
+        .catch((err) => {
+          SysLog.error(JSON.stringify(err));
           resolve(userAccountTypes);
           return;
-        }
-        SysLog.info('get user accounts with id: ', userId);
-        result.rows.forEach(data => {
-          const userAccount = SqlFormatter.transposeColumnResultSet(
-            ['account_type',
-            'user_id',
-            'account_id',
-            'id'],
-            data
-          )
-          userAccountTypes.push(userAccount);
         });
-        resolve(userAccountTypes);
-      })
-      .catch((err) => {
-        SysLog.error(JSON.stringify(err));
-        resolve(userAccountTypes);
-        return;
       });
+
     });
   };
 
@@ -96,41 +99,44 @@ export class UserAccountModel extends EntityModel {
       sql += ' WHERE ' + userAccounts_schema_table+ '.site_code = ' + SqlStr.escape(siteCode) + ' AND ';
       sql += userAccounts_schema_table+ '.status = ' + SqlStr.escape(status) + ' AND ';
       sql += SqlStr.format(userAccounts_schema_table+ '.user_id = UUID_TO_BIN(?);', [userId]);
-      dbConnection.DB.sql(sql).execute()
-      .then((result) => {
-        if (result.rows.length == 0) {
-          // not found Customer with the id
+      appDbConnection.connectDB().then((DBSession) => {
+        DBSession.sql(sql).execute()
+        .then((result) => {
+          if (result.rows.length == 0) {
+            // not found Customer with the id
+            resolve(userAccountTypes);
+            return;
+          }
+          SysLog.info('get user accounts with id: ', userId);
+          result.rows.forEach(rowData => {
+            const userAccountDataDTO = new UserAccountDataDTO() as UserAccountsData
+            let colIdx = 0;
+            colIdx = SqlFormatter.transposeTableSelectColumns(colIdx,
+                                                              userAccountDataDTO,
+                                                              accounts_schema,
+                                                              rowData,
+                                                              ['id']);
+            colIdx = SqlFormatter.transposeTableSelectColumnArray(
+              colIdx,
+              userAccountDataDTO,
+              [
+              'user_id',
+              'account_id',
+              'user_account_id'
+              ],
+              rowData
+            )
+            userAccountTypes.push(userAccountDataDTO);
+          });
+          resolve(userAccountTypes);
+        })
+        .catch((err) => {
+          SysLog.error(JSON.stringify(err));
           resolve(userAccountTypes);
           return;
-        }
-        SysLog.info('get user accounts with id: ', userId);
-        result.rows.forEach(rowData => {
-          const userAccountDataDTO = new UserAccountDataDTO() as UserAccountsData
-          let colIdx = 0;
-          colIdx = SqlFormatter.transposeTableSelectColumns(colIdx,
-                                                            userAccountDataDTO,
-                                                            accounts_schema,
-                                                            rowData,
-                                                            ['id']);
-          colIdx = SqlFormatter.transposeTableSelectColumnArray(
-            colIdx,
-            userAccountDataDTO,
-            [
-            'user_id',
-            'account_id',
-            'user_account_id'
-            ],
-            rowData
-          )
-          userAccountTypes.push(userAccountDataDTO);
         });
-        resolve(userAccountTypes);
-      })
-      .catch((err) => {
-        SysLog.error(JSON.stringify(err));
-        resolve(userAccountTypes);
-        return;
       });
+
     });
   };
 
@@ -143,24 +149,27 @@ export class UserAccountModel extends EntityModel {
       sql += ' WHERE ' + userAccounts_schema_table+ '.site_code = ' + SqlStr.escape(siteCode) + ' AND ';
       sql += userAccounts_schema_table+ '.status = ' + SqlStr.escape(status) + ' AND ';
       sql += SqlStr.format(userAccounts_schema_table+ '.user_id = UUID_TO_BIN(?);', [userId]);
-      dbConnection.DB.sql(sql).execute()
-      .then((result) => {
-        if (result.rows.length == 0) {
-          // not found account with user id
+      appDbConnection.connectDB().then((DBSession) => {
+        DBSession.sql(sql).execute()
+        .then((result) => {
+          if (result.rows.length == 0) {
+            // not found account with user id
+            resolve(userAccountIds);
+            return;
+          }
+          SysLog.info('get user accounts with id: ', userId);
+          result.rows.forEach(rowData => {
+            userAccountIds.push(rowData[0]);
+          });
+          resolve(userAccountIds);
+        })
+        .catch((err) => {
+          SysLog.error(JSON.stringify(err));
           resolve(userAccountIds);
           return;
-        }
-        SysLog.info('get user accounts with id: ', userId);
-        result.rows.forEach(rowData => {
-          userAccountIds.push(rowData[0]);
         });
-        resolve(userAccountIds);
-      })
-      .catch((err) => {
-        SysLog.error(JSON.stringify(err));
-        resolve(userAccountIds);
-        return;
       });
+
     });
   };
 }

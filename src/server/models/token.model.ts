@@ -5,7 +5,7 @@ import { TokenData } from './../../schemas/tokens.schema';
 import { SqlFormatter } from '../../modules/sql.strings';
 import SqlStr = require('sqlstring');
 import e = require('express');
-import dbConnection from '../../modules/DbModule';
+import appDbConnection from '../../modules/AppDBModule';
 import { token_schema, tokens_schema_table } from '../../schemas/tokens.schema';
 import { TokenDTO } from '../../dtos/tokens.DTO';
 import { uuidIfc } from '../../interfaces/uuidIfc';
@@ -46,13 +46,14 @@ export class TokenModel extends EntityModel{
         this.tableName,
         token_schema
       ).then((sql) => {
-        dbConnection.DB.sql('SET @uuidId=UUID(); ')
+        appDbConnection.connectDB().then((DBSession) => {
+          DBSession.sql('SET @uuidId=UUID(); ')
           .execute()
           .then((result1) => {
-            dbConnection.DB.sql(sql)
+            DBSession.sql(sql)
               .execute()
               .then((result2) => {
-                dbConnection.DB.sql('SELECT @uuidId;')
+                DBSession.sql('SELECT @uuidId;')
                   .execute()
                   .then((result3) => {
                     SysLog.info('created Token');
@@ -78,6 +79,7 @@ export class TokenModel extends EntityModel{
             resolve(respTokenDTO);
             return;
           });
+        });
       });
     });
   };
@@ -88,7 +90,8 @@ export class TokenModel extends EntityModel{
       sql += `site_code = '${this.siteCode}' AND `;
       sql += SqlStr.format('uuid = UUID_TO_BIN(?)', [uuid]);
       sql += ';';
-      dbConnection.DB.sql(sql)
+      appDbConnection.connectDB().then((DBSession) => {
+        DBSession.sql(sql)
         .execute()
         .then((result) => {
           SysLog.info('deleted ' + this.tableName + ' with uuid: ', uuid);
@@ -99,6 +102,7 @@ export class TokenModel extends EntityModel{
           resolve(undefined);
           return;
         });
+      });
     });
   };
 
@@ -117,11 +121,11 @@ export class TokenModel extends EntityModel{
   };
 
   purgeExpired = () => {
-    if (dbConnection.DB) {
       // SysLog.info('purging expired tokens..');
       let sql = SqlFormatter.formatSelect(this.tableName, token_schema);
       sql += SqlFormatter.formatWhereAND('', {site_code: this.siteCode}, this.tableName, token_schema);
-      dbConnection.DB.sql(sql)
+      appDbConnection.connectDB().then((DBSession) => {
+        DBSession.sql(sql)
         .execute()
         .then((result) => {
           if (result.rows.length > 0) {
@@ -144,6 +148,6 @@ export class TokenModel extends EntityModel{
           SysLog.error(JSON.stringify(err));
           return;
         });
-    }
+      });
   };
 }

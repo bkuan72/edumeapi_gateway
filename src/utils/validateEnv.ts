@@ -30,7 +30,11 @@ import {
         DEFAULT_PROXY_LOG_LEVEL: str(),
         ROUTER_SERVICE: str(),
         ROUTER_SERVICE_PORT: str(),
-        PROXY_TARGET: str()
+        PROXY_TARGET: str(),
+        PROPERTY_SERVICE: str(),
+        PROPERTY_SERVICE_PORT: str(),
+        USER_ACC_MOD_ROLE_SERVICE: str(),
+        USER_ACC_MOD_ROLE_SERVICE_PORT: str(),
     });
   }
 
